@@ -1,0 +1,65 @@
+local game_ids = {
+    [3233893879] = bad_business.lua,
+    [292439477] = phantom_forces.lua,
+    [2377868063] = strucid.lua,
+    [443406476] = project_lazarus.lua
+}
+
+local custom_theme, default_theme = getgenv().evo_v2_theme, {
+    background_main = Color3.fromRGB(22, 22, 22),
+    background_folders = Color3.fromRGB(28, 28, 28),
+    background_items = Color3.fromRGB(48, 48, 48),
+    background_highlight = Color3.fromRGB(62, 62, 62),
+    foreground_main = Color3.fromRGB(235, 235, 235),
+    foreground_accent = Color3.fromRGB(180, 180, 180),
+    foreground_folders = Color3.fromRGB(210, 210, 210),
+    foreground_placeholder = Color3.fromRGB(136, 136, 136),
+    accent_main = Color3.fromRGB(35, 110, 200),
+    scroll_main = Color3.fromRGB(100, 100, 100),
+    separator_main = Color3.fromRGB(140, 140, 140),
+    hover_main = Color3.fromRGB(48, 48, 48),
+    hover_items = Color3.fromRGB(72, 72, 72),
+    press_main = Color3.fromRGB(50, 50, 50),
+    press_items = Color3.fromRGB(86, 86, 86),
+    toggle_disabled = Color3.fromRGB(82, 82, 82),
+    toggle_enabled = Color3.fromRGB(35, 110, 200),
+    slider_highlight = Color3.fromRGB(82, 82, 82)
+}
+
+if custom_theme then
+    for i, v in next, default_theme do
+        if custom_theme[i] then
+            default_theme[i] = custom_theme[i]
+        end
+    end
+end
+
+local beat = gameGetService(RunService).Heartbeat
+local wait = beat.Wait
+
+getgenv().fast_wait = function(delay)
+    local elapsed = 0
+    while elapsed  delay do
+        elapsed = elapsed + wait(beat)
+    end
+end
+
+getgenv().set_identity = set_identity or setidentity or setcontext or setthreadidentity or setthreadcontext or (syn and syn.set_thread_identity)
+getgenv().hookmetamethod = hookmetamethod or (getrawmetatable and setreadonly and hookfunction and newcclosure and newcclosure(function(item, metamethod, func)
+    local meta = getrawmetatable(item)
+    setreadonly(meta, false)
+    local old = hookfunction(meta[metamethod], func)
+    setreadonly(meta, true)
+    return old
+end))
+
+getgenv().evo_v2_theme, getgenv().script_context = default_theme, game_ids[game.PlaceId]
+
+if script_context then
+    loadstring(gameHttpGet(httpsprojectevo.xyzscriptgames .. script_context))()
+else
+    gameGetService(StarterGui)SetCore(SendNotification, {
+        Title = Evo V2,
+        Text = This game is not supported.
+    })
+end
